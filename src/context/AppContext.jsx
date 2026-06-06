@@ -42,21 +42,32 @@ export function AppProvider({ children }) {
   }, []);
 
   const addBooking = async (booking) => {
-    const { data, error } = await supabase
-      .from('bookings')
-      .insert([{ ...booking, status: 'confirmed' }])
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert([{ ...booking, status: 'confirmed' }])
+        .select()
+        .single();
 
-    if (!error) {
+      if (error) {
+        console.error('Booking error:', error);
+        return null;
+      }
+
       setBookings(prev => [data, ...prev]);
 
-      // Send email notification to driver 📧
-      await supabase.functions.invoke('notify-driver', {
+      // Call email function
+      console.log('Calling notify-driver with booking:', data);
+      const result = await supabase.functions.invoke('notify-driver', {
         body: { booking: data }
       });
+      console.log('Email function result:', result);
+
+      return data;
+
+    } catch (err) {
+      console.error('addBooking failed:', err);
     }
-    return data;
   };
 
   const cancelBooking = async (id) => {
