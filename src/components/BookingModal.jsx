@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { X, MapPin, Clock, Calendar, Car } from 'lucide-react';
-import { Avatar, Button, Input, Select, Chip, Card } from './UI';
+import { X, MapPin } from 'lucide-react';
+import { Avatar, Button, Input, Select, Chip } from './UI';
 import { TRIP_TYPES } from '../context/AppContext';
 import { useApp } from '../context/AppContext';
+import { supabase } from '../lib/supabase';
 
 export default function BookingModal({ driver, onClose, onConfirm }) {
   const { showNotification } = useApp();
@@ -15,11 +16,20 @@ export default function BookingModal({ driver, onClose, onConfirm }) {
   const fare = { '1 hour': 300, '2 hours': 500, '4 hours': 900, 'Full day': 1600, 'Overnight': 2200 };
   const estimatedFare = fare[duration] || 500;
 
-  const handleConfirm = () => {
-    if (!pickup.trim()) { showNotification('Please enter a pickup location', 'error'); return; }
+  const handleConfirm = async () => {
+    if (!pickup.trim()) {
+      showNotification('Please enter a pickup location', 'error');
+      return;
+    }
+
+    const { data: { user } } = await supabase.auth.getUser();
+
     onConfirm({
-      driverId: driver.id,
-      type: tripType,
+      customer_id: user?.id,
+      customer_name: user?.user_metadata?.full_name || 'Customer',
+      driver_id: driver.id,
+      driver_name: driver.name,
+      trip_type: tripType,
       date,
       time: '9:00 PM',
       duration,
