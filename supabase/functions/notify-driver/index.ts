@@ -32,7 +32,7 @@ serve(async (req) => {
     },
     body: JSON.stringify({
       from: 'DriverLink <noreply@driverlink.ph>',
-      to: driverEmail,
+      to: 'itsmenoob08@gmail.com',
       subject: `🚗 New Booking Request — ₱${booking.fare}`,
       html: `
         <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
