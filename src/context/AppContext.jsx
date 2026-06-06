@@ -6,7 +6,7 @@ const AppContext = createContext(null);
 export const TRIP_TYPES = ['Designated driver', 'Long trip', 'Elderly care', 'Business trip', 'Hourly hire'];
 
 export const DRIVERS = [
-  { id: 1, name: 'Ricky Dela Cruz', initials: 'RD', color: '#1a5c9a', bg: '#e8f1fb', location: 'Zamboanga City', distance: '3.2 km', rating: 4.9, trips: 34, status: 'online', types: ['Designated', 'Long trip'], nbi: true, licensed: true, phone: '+63 912 555 0101', bio: 'Professional driver with 5 years experience.' },
+  { id: 1, name: 'Dashiel Dinopol', initials: 'RD', color: '#1a5c9a', bg: '#e8f1fb', location: 'Zamboanga City', distance: '3.2 km', rating: 4.9, trips: 34, status: 'online', types: ['Designated', 'Long trip'], nbi: true, licensed: true, phone: '+63 912 555 0101', bio: 'Professional driver with 5 years experience.' },
   { id: 2, name: 'Jun Manalo', initials: 'JM', color: '#0f6e56', bg: '#e1f5ee', location: 'Zamboanga City', distance: '5.1 km', rating: 4.6, trips: 18, status: 'online', types: ['Elderly care', 'Hourly'], nbi: true, licensed: true, phone: '+63 917 555 0202', bio: 'Patient and courteous driver.' },
   { id: 3, name: 'Lorna Paterno', initials: 'LP', color: '#854f0b', bg: '#faeeda', location: 'Zamboanga City', distance: '7.8 km', rating: 5.0, trips: 52, status: 'away', types: ['Corporate', 'Long trip', 'Designated'], nbi: true, licensed: true, phone: '+63 920 555 0303', bio: 'Top-rated corporate driver.' },
   { id: 4, name: 'Marco Reyes', initials: 'MR', color: '#533ab7', bg: '#eeedfe', location: 'Zamboanga City', distance: '2.4 km', rating: 4.8, trips: 27, status: 'online', types: ['Designated', 'Hourly'], nbi: true, licensed: false, phone: '+63 915 555 0404', bio: 'Young and reliable driver.' },
