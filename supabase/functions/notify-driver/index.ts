@@ -52,7 +52,7 @@ serve(async (req) => {
               <p style="margin: 0;"><strong>💰 Fare:</strong> <span style="color: #1a5c9a; font-size: 20px; font-weight: 700;">₱${booking.fare}</span></p>
             </div>
 
-            <a href="https://fetchmalaybalay.vercel.app" 
+            <a href="https://driverbooking.vercel.app" 
                style="display: block; background: #1a5c9a; color: white; text-align: center; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 16px;">
               Open App to Accept →
             </a>
