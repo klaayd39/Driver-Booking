@@ -59,7 +59,7 @@ export default function AuthPage({ onLogin }) {
             <Car size={28} color="#fff" />
           </div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: '#1c1a17', marginBottom: 4 }}>
-            DriverLink
+            Driver Booking
           </h1>
           <p style={{ fontSize: 14, color: '#9c9890' }}>
             {isLogin ? 'Welcome back!' : 'Create your account'}
