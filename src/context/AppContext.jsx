@@ -47,7 +47,15 @@ export function AppProvider({ children }) {
       .insert([{ ...booking, status: 'confirmed' }])
       .select()
       .single();
-    if (!error) setBookings(prev => [data, ...prev]);
+
+    if (!error) {
+      setBookings(prev => [data, ...prev]);
+
+      // Send email notification to driver 📧
+      await supabase.functions.invoke('notify-driver', {
+        body: { booking: data }
+      });
+    }
     return data;
   };
 
