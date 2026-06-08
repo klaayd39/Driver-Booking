@@ -17,7 +17,7 @@ import DriverProfilePage from './pages/DriverProfilePage';
 import SettingsPage from './pages/SettingsPage';
 
 function AppShell({ user, onLogout }) {
-  const { mode, setMode, notification } = useApp();
+  const { mode, notification } = useApp();
   const [activePage, setActivePage] = useState('book');
 
   useEffect(() => {
@@ -37,11 +37,20 @@ function AppShell({ user, onLogout }) {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', width: '100vw', maxWidth: '100vw' }}>
+    <div style={{
+      display: 'flex', height: '100vh', overflow: 'hidden',
+      width: '100vw', maxWidth: '100vw', position: 'relative',
+    }}>
       <Sidebar activePage={activePage} onNavigate={setActivePage} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+      <div style={{
+        flex: 1, display: 'flex', flexDirection: 'column',
+        overflow: 'hidden', minWidth: 0,
+      }}>
         <TopBar activePage={activePage} user={user} />
-        <main className="main-content" style={{ flex: 1, overflowY: 'auto', background: '#f9f8f6' }}>
+        <main className="main-content" style={{
+          flex: 1, overflowY: 'auto', overflowX: 'hidden',
+          background: '#f9f8f6', width: '100%',
+        }}>
           {pages[activePage] || <BookPage />}
         </main>
       </div>
@@ -88,41 +97,9 @@ export default function App() {
     return <AuthPage onLogin={setUser} />;
   }
 
-    return (
-    <div style={{ 
-      display: 'flex', 
-      height: '100vh', 
-      overflow: 'hidden', 
-      width: '100vw', 
-      maxWidth: '100vw',
-      position: 'relative',
-    }}>
-      {/* Sidebar - hidden on mobile via CSS */}
-      <Sidebar activePage={activePage} onNavigate={setActivePage} />
-      
-      <div style={{ 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column', 
-        overflow: 'hidden',
-        minWidth: 0,
-        width: '100%',
-      }}>
-        <TopBar activePage={activePage} user={user} />
-        <main className="main-content" style={{ 
-          flex: 1, 
-          overflowY: 'auto', 
-          overflowX: 'hidden',
-          background: '#f9f8f6',
-          width: '100%',
-        }}>
-          {pages[activePage] || <BookPage />}
-        </main>
-      </div>
-
-      {/* Bottom nav - shows on mobile only */}
-      <BottomNav activePage={activePage} onNavigate={setActivePage} />
-      <Toast notification={notification} />
-    </div>
+  return (
+    <AppProvider>
+      <AppShell user={user} onLogout={handleLogout} />
+    </AppProvider>
   );
-  }
+}
