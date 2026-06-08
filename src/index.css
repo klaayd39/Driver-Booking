@@ -182,3 +182,17 @@ input, select, textarea { font-family: var(--font-sans); }
 .leaflet-tile {
   filter: none !important;
 }
+/* Fix content cut off on right side mobile */
+.main-content > div {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* Hide scrollbar on mobile */
+@media (max-width: 768px) {
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
