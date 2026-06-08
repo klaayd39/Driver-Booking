@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { supabase } from './lib/supabase';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
+import BottomNav from './components/BottomNav';
 import { Toast } from './components/UI';
 import AuthPage from './pages/AuthPage';
 
@@ -36,14 +37,15 @@ function AppShell({ user, onLogout }) {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', width: '100vw', maxWidth: '100vw' }}>
       <Sidebar activePage={activePage} onNavigate={setActivePage} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
         <TopBar activePage={activePage} user={user} />
-        <main style={{ flex: 1, overflowY: 'auto', background: '#f9f8f6' }}>
+        <main className="main-content" style={{ flex: 1, overflowY: 'auto', background: '#f9f8f6' }}>
           {pages[activePage] || <BookPage />}
         </main>
       </div>
+      <BottomNav activePage={activePage} onNavigate={setActivePage} />
       <Toast notification={notification} />
     </div>
   );
@@ -54,13 +56,11 @@ export default function App() {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // Check if already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setChecking(false);
     });
 
-    // Listen for login/logout
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
