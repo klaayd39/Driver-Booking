@@ -27,7 +27,7 @@ export default function DriverBookingsPage() {
   const past = bookings.filter(b => b.status !== 'confirmed');
 
   return (
-    <div style={{ padding: '24px', maxWidth: 600, animation: 'fadeUp 0.3s ease' }}>
+    <div style={{ padding: '16px', maxWidth: '100%', animation: 'fadeUp 0.3s ease', overflowX: 'hidden' }}>
       <div style={{ marginBottom: 20 }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: '#1c1a17', marginBottom: 4 }}>My Bookings</h2>
         <p style={{ fontSize: 14, color: '#9c9890' }}>Manage your upcoming and past trips.</p>

@@ -85,7 +85,7 @@ export default function ProfilePage({ user, onLogout }) {
   const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U';
 
   return (
-    <div style={{ padding: '24px', maxWidth: 560, animation: 'fadeUp 0.3s ease' }}>
+    <div style={{ padding: '16px', maxWidth: '100%', animation: 'fadeUp 0.3s ease', overflowX: 'hidden' }}>
       {/* Profile header */}
       <Card style={{ padding: '24px', marginBottom: 16, textAlign: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>

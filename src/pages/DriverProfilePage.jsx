@@ -18,7 +18,7 @@ export default function DriverProfilePage() {
   };
 
   return (
-    <div style={{ padding: '24px', maxWidth: 580, animation: 'fadeUp 0.3s ease' }}>
+    <div style={{ padding: '16px', maxWidth: '100%', animation: 'fadeUp 0.3s ease', overflowX: 'hidden' }}>
       {/* Header */}
       <Card style={{ padding: '24px', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>

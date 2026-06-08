@@ -45,13 +45,7 @@ export default function BookPage() {
   };
 
   return (
-    <div
-      style={{
-        padding: '24px',
-        maxWidth: 600,
-        animation: 'fadeUp 0.3s ease',
-      }}
-    >
+   <div style={{ padding: '16px', maxWidth: '100%', animation: 'fadeUp 0.3s ease', overflowX: 'hidden' }}>
       {/* Hero */}
       <div style={{ marginBottom: 24 }}>
         <div

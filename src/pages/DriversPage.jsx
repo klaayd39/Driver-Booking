@@ -31,7 +31,7 @@ export default function DriversPage() {
   };
 
   return (
-    <div style={{ padding: '24px', maxWidth: 620, animation: 'fadeUp 0.3s ease' }}>
+    <div style={{ padding: '16px', maxWidth: '100%', animation: 'fadeUp 0.3s ease', overflowX: 'hidden' }}>
       <div style={{ marginBottom: 20 }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: '#1c1a17', marginBottom: 4 }}>Find a Driver</h2>
         <p style={{ fontSize: 14, color: '#9c9890' }}>All drivers are NBI-cleared and license-verified.</p>

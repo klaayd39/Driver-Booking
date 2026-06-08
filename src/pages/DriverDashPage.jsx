@@ -17,7 +17,7 @@ export default function DriverDashPage() {
   ];
 
   return (
-    <div style={{ padding: '24px', maxWidth: 620, animation: 'fadeUp 0.3s ease' }}>
+    <div style={{ padding: '16px', maxWidth: '100%', animation: 'fadeUp 0.3s ease', overflowX: 'hidden' }}>
 
       {/* Driver header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
