@@ -111,7 +111,7 @@ export default function ProfilePage({ user, onLogout }) {
           <div>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 22 }}>{name || 'Customer'}</div>
             <div style={{ fontSize: 13, color: '#9c9890', display: 'flex', alignItems: 'center', gap: 5, justifyContent: 'center', marginTop: 4 }}>
-              <MapPin size={12} /> Zamboanga City · Customer
+              <MapPin size={12} /> Malaybalay City · Customer
             </div>
           </div>
 
