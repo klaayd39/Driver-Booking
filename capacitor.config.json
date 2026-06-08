@@ -1,5 +1,21 @@
 {
   "appId": "com.FetchMalaybalay.app",
-  "appName": "FetchMalaybalay",
-  "webDir": "dist"
+  "appName": "DriverLink",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "url": "https://driverbooking.vercel.app",
+    "cleartext": true
+  },
+  "ios": {
+    "contentInset": "always",
+    "backgroundColor": "#f9f8f6"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#1a5c9a",
+      "showSpinner": false
+    }
+  }
 }

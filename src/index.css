@@ -172,3 +172,13 @@ input, select, textarea { font-family: var(--font-sans); }
     padding-top: max(0px, env(safe-area-inset-top)) !important;
   }
 }
+/* Fix Leaflet map on mobile */
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+}
+
+.leaflet-tile {
+  filter: none !important;
+}

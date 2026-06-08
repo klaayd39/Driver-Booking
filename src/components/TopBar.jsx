@@ -29,18 +29,15 @@ export default function TopBar({ activePage }) {
   };
 
   return (
-    <header
-      style={{
-        height: 60,
-        background: '#fff',
-        borderBottom: '1px solid #eae8e2',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 24px',
-        flexShrink: 0,
-      }}
-    >
+ <header style={{
+  height: 60, background: '#fff', borderBottom: '1px solid #eae8e2',
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  padding: '0 16px',
+  paddingTop: 'env(safe-area-inset-top)',
+  paddingLeft: 'max(16px, env(safe-area-inset-left))',
+  paddingRight: 'max(16px, env(safe-area-inset-right))',
+  flexShrink: 0,
+}}>
       <h1
         style={{
           fontSize: 17,
