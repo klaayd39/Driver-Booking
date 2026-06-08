@@ -23,7 +23,9 @@ export default function BottomNav({ activePage, onNavigate }) {
       position: 'fixed', bottom: 0, left: 0, right: 0,
       background: '#fff', borderTop: '1px solid #eae8e2',
       display: 'flex', alignItems: 'center', justifyContent: 'space-around',
-      padding: '8px 0 16px', zIndex: 100,
+      paddingTop: 8,
+      paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+      zIndex: 100,
       boxShadow: '0 -4px 16px rgba(0,0,0,0.08)',
     }}>
       {items.map(({ id, icon: Icon, label }) => {
@@ -36,11 +38,14 @@ export default function BottomNav({ activePage, onNavigate }) {
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               gap: 3, padding: '4px 16px', border: 'none', background: 'none',
               color: active ? '#1a5c9a' : '#9c9890', cursor: 'pointer',
-              transition: 'color 0.15s',
+              transition: 'color 0.15s', minWidth: 60,
             }}
           >
-            <Icon size={22} />
-            <span style={{ fontSize: 10, fontWeight: active ? 600 : 400, fontFamily: 'var(--font-sans)' }}>
+            <Icon size={22} strokeWidth={active ? 2.5 : 2} />
+            <span style={{
+              fontSize: 10, fontWeight: active ? 600 : 400,
+              fontFamily: 'var(--font-sans)',
+            }}>
               {label}
             </span>
           </button>
