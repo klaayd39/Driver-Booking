@@ -2,7 +2,7 @@
 
 > **The "Uber for personal drivers" — connecting car owners with verified local drivers in Malaybalay City, Philippines.**
 
-[![Live Demo](https://img.shields.io/badge/Live-driverbooking.vercel.app-1a5c9a?style=for-the-badge)](https://driverbooking.vercel.app)
+[![Live Demo](https://img.shields.io/badge/tsetbooking.vercel.app-1a5c9a?style=for-the-badge)](https://driverbooking.vercel.app)
 [![Built with React](https://img.shields.io/badge/React-Vite-61DAFB?style=for-the-badge&logo=react)](https://vitejs.dev)
 [![Supabase](https://img.shields.io/badge/Database-Supabase-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed-Vercel-000000?style=for-the-badge&logo=vercel)](https://vercel.com)
