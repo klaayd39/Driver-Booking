@@ -1,6 +1,6 @@
 # 🚗 DriverLink
 
-> **The "Uber for personal drivers" — connecting car owners with verified local drivers in Zamboanga City, Philippines.**
+> **The "Uber for personal drivers" — connecting car owners with verified local drivers in Malaybalay City, Philippines.**
 
 [![Live Demo](https://img.shields.io/badge/Live-driverbooking.vercel.app-1a5c9a?style=for-the-badge)](https://driverbooking.vercel.app)
 [![Built with React](https://img.shields.io/badge/React-Vite-61DAFB?style=for-the-badge&logo=react)](https://vitejs.dev)
