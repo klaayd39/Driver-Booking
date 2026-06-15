@@ -10,33 +10,86 @@ export default function AuthPage({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    setError('');
+const handleSubmit = async () => {
+  setLoading(true);
+  setError('');
+  setSuccess('');
 
+  try {
     if (isLogin) {
-      // Login
+      // LOGIN
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      if (error) setError(error.message);
-      else onLogin(data.user);
+
+      if (error) {
+        setError(error.message);
+      } else if (!data.user?.email_confirmed_at) {
+        await supabase.auth.signOut();
+
+        setError(
+          'Please verify your email address before logging in. Check your inbox.'
+        );
+      } else {
+        onLogin(data.user);
+      }
     } else {
-      // Sign up
-      const { data, error } = await supabase.auth.signUp({
+      // SIGN UP
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { full_name: name }
-        }
+          emailRedirectTo: window.location.origin,
+          data: {
+            full_name: name,
+          },
+        },
       });
-      if (error) setError(error.message);
-      else onLogin(data.user);
+
+      if (error) {
+        setError(error.message);
+      } else {
+        setSuccess(
+          'Account created successfully! Please check your email and click the verification link before logging in.'
+        );
+
+        // Switch back to login form
+setIsLogin(true);
+
+// Clear form
+setName('');
+setEmail('');
+setPassword('');
+      }
     }
-    setLoading(false);
-  };
+  } catch (err) {
+    setError(err.message || 'Something went wrong.');
+  }
+
+  setLoading(false);
+};
+const resendVerification = async () => {
+  if (!email) {
+    setError('Please enter your email address first.');
+    return;
+  }
+
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email,
+  });
+
+  if (error) {
+    setError(error.message);
+  } else {
+    setSuccess(
+      'Verification email sent successfully. Please check your inbox.'
+    );
+  }
+};
 
   return (
     <div style={{
@@ -153,6 +206,22 @@ export default function AuthPage({ onLogin }) {
             ⚠️ {error}
           </div>
         )}
+        {success && (
+  <div
+    style={{
+      background: '#e8f8ee',
+      color: '#1f7a45',
+      padding: '10px 14px',
+      borderRadius: 10,
+      fontSize: 13,
+      marginBottom: 16,
+      border: '1px solid #cdeed8',
+    }}
+  >
+    ✅ {success}
+  </div>
+)}
+
 
         {/* Submit button */}
         <button
@@ -164,9 +233,29 @@ export default function AuthPage({ onLogin }) {
             cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
             fontFamily: 'var(--font-sans)', transition: 'opacity 0.15s',
           }}
+          
         >
           {loading ? '⏳ Please wait...' : isLogin ? 'Log in' : 'Create account'}
         </button>
+{isLogin && (
+  <button
+    type="button"
+    onClick={resendVerification}
+    style={{
+      width: '100%',
+      marginTop: 12,
+      padding: '10px',
+      border: 'none',
+      background: 'transparent',
+      color: '#1a5c9a',
+      cursor: 'pointer',
+      fontSize: 13,
+      fontWeight: 500,
+    }}
+  >
+    Resend verification email
+  </button>
+)}
 
         <p style={{ textAlign: 'center', fontSize: 12, color: '#9c9890', marginTop: 20 }}>
           By continuing, you agree to DriverLink's Terms of Service.
