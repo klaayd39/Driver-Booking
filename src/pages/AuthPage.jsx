@@ -12,84 +12,79 @@ export default function AuthPage({ onLogin }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-const handleSubmit = async () => {
-  setLoading(true);
-  setError('');
-  setSuccess('');
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
 
-  try {
-    if (isLogin) {
-      // LOGIN
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    try {
+      if (isLogin) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-      if (error) {
-        setError(error.message);
-      } else if (!data.user?.email_confirmed_at) {
-        await supabase.auth.signOut();
-
-        setError(
-          'Please verify your email address before logging in. Check your inbox.'
-        );
+        if (error) {
+          setError(error.message);
+        } else if (!data.user?.email_confirmed_at) {
+          await supabase.auth.signOut();
+          setError('Please verify your email address before logging in. Check your inbox.');
+        } else {
+          onLogin(data.user);
+        }
       } else {
-        onLogin(data.user);
-      }
-    } else {
-      // SIGN UP
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.origin,
-          data: {
-            full_name: name,
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { full_name: name },
           },
-        },
-      });
+        });
 
-      if (error) {
-        setError(error.message);
-      } else {
-        setSuccess(
-          'Account created successfully! Please check your email and click the verification link before logging in.'
-        );
-
-        // Switch back to login form
-setIsLogin(true);
-
-// Clear form
-setName('');
-setEmail('');
-setPassword('');
+        if (error) {
+          setError(error.message);
+        } else {
+          setSuccess('Account created! Please check your email and click the verification link.');
+          setIsLogin(true);
+          setName('');
+          setEmail('');
+          setPassword('');
+        }
       }
+    } catch (err) {
+      setError(err.message || 'Something went wrong.');
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError(err.message || 'Something went wrong.');
-  }
+  };
 
-  setLoading(false);
-};
-const resendVerification = async () => {
-  if (!email) {
-    setError('Please enter your email address first.');
-    return;
-  }
+  const resendVerification = async () => {
+    if (!email) {
+      setError('Please enter your email address first.');
+      return;
+    }
 
-  const { error } = await supabase.auth.resend({
-    type: 'signup',
-    email,
-  });
+    setLoading(true);
+    setError('');
+    setSuccess('');
 
-  if (error) {
-    setError(error.message);
-  } else {
-    setSuccess(
-      'Verification email sent successfully. Please check your inbox.'
-    );
-  }
-};
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: window.location.origin,
+      },
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setSuccess('Verification email sent successfully. Please check your inbox.');
+    }
+  };
 
   return (
     <div style={{
@@ -102,7 +97,6 @@ const resendVerification = async () => {
         width: '100%', maxWidth: 420,
         boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
       }}>
-        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
             width: 56, height: 56, borderRadius: 16, background: '#1a5c9a',
@@ -111,31 +105,21 @@ const resendVerification = async () => {
           }}>
             <Car size={28} color="#fff" />
           </div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: '#1c1a17', marginBottom: 4 }}>
-            Driver Booking
-          </h1>
-          <p style={{ fontSize: 14, color: '#9c9890' }}>
-            {isLogin ? 'Welcome back!' : 'Create your account'}
-          </p>
+          <h1 style={{ fontSize: 28, color: '#1c1a17', marginBottom: 4 }}>Driver Booking</h1>
+          <p style={{ fontSize: 14, color: '#9c9890' }}>{isLogin ? 'Welcome back!' : 'Create your account'}</p>
         </div>
 
-        {/* Toggle */}
-        <div style={{
-          display: 'flex', background: '#f1efe9', borderRadius: 12,
-          padding: 4, marginBottom: 24, gap: 4,
-        }}>
+        <div style={{ display: 'flex', background: '#f1efe9', borderRadius: 12, padding: 4, marginBottom: 24, gap: 4 }}>
           {['Log in', 'Sign up'].map((label, i) => (
             <button
               key={label}
-              onClick={() => { setIsLogin(i === 0); setError(''); }}
+              onClick={() => { setIsLogin(i === 0); setError(''); setSuccess(''); }}
               style={{
                 flex: 1, padding: '9px', borderRadius: 9, border: 'none',
                 background: (isLogin ? i === 0 : i === 1) ? '#fff' : 'transparent',
                 color: (isLogin ? i === 0 : i === 1) ? '#1c1a17' : '#9c9890',
                 fontWeight: (isLogin ? i === 0 : i === 1) ? 600 : 400,
-                cursor: 'pointer', fontSize: 14, fontFamily: 'var(--font-sans)',
-                boxShadow: (isLogin ? i === 0 : i === 1) ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-                transition: 'all 0.15s',
+                cursor: 'pointer', fontSize: 14,
               }}
             >
               {label}
@@ -143,20 +127,12 @@ const resendVerification = async () => {
           ))}
         </div>
 
-        {/* Fields */}
         {!isLogin && (
           <div style={{ marginBottom: 14 }}>
             <div style={{ fontSize: 12, fontWeight: 500, color: '#6b6760', marginBottom: 5 }}>Full name</div>
             <div style={{ position: 'relative' }}>
               <User size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9c9890' }} />
-              <input
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Maria Vizcarra"
-                style={{ width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e4e1d8', borderRadius: 10, fontSize: 14, fontFamily: 'var(--font-sans)', outline: 'none', background: '#faf9f7' }}
-                onFocus={e => e.target.style.borderColor = '#3a7fc1'}
-                onBlur={e => e.target.style.borderColor = '#e4e1d8'}
-              />
+              <input value={name} onChange={e => setName(e.target.value)} placeholder="Maria Vizcarra" style={{ width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e4e1d8', borderRadius: 10, fontSize: 14, background: '#faf9f7', outline: 'none' }} />
             </div>
           </div>
         )}
@@ -165,15 +141,7 @@ const resendVerification = async () => {
           <div style={{ fontSize: 12, fontWeight: 500, color: '#6b6760', marginBottom: 5 }}>Email</div>
           <div style={{ position: 'relative' }}>
             <Mail size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9c9890' }} />
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="you@email.com"
-              style={{ width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e4e1d8', borderRadius: 10, fontSize: 14, fontFamily: 'var(--font-sans)', outline: 'none', background: '#faf9f7' }}
-              onFocus={e => e.target.style.borderColor = '#3a7fc1'}
-              onBlur={e => e.target.style.borderColor = '#e4e1d8'}
-            />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" style={{ width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e4e1d8', borderRadius: 10, fontSize: 14, background: '#faf9f7', outline: 'none' }} />
           </div>
         </div>
 
@@ -181,81 +149,25 @@ const resendVerification = async () => {
           <div style={{ fontSize: 12, fontWeight: 500, color: '#6b6760', marginBottom: 5 }}>Password</div>
           <div style={{ position: 'relative' }}>
             <Lock size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9c9890' }} />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              style={{ width: '100%', padding: '10px 36px 10px 36px', border: '1px solid #e4e1d8', borderRadius: 10, fontSize: 14, fontFamily: 'var(--font-sans)', outline: 'none', background: '#faf9f7' }}
-              onFocus={e => e.target.style.borderColor = '#3a7fc1'}
-              onBlur={e => e.target.style.borderColor = '#e4e1d8'}
-              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-            />
-            <button
-              onClick={() => setShowPassword(!showPassword)}
-              style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: '#9c9890' }}
-            >
+            <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" style={{ width: '100%', padding: '10px 36px', border: '1px solid #e4e1d8', borderRadius: 10, fontSize: 14, background: '#faf9f7', outline: 'none' }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
+            <button onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: '#9c9890' }}>
               {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
           </div>
         </div>
 
-        {/* Error */}
-        {error && (
-          <div style={{ background: '#fdeaea', color: '#d63b3b', padding: '10px 14px', borderRadius: 10, fontSize: 13, marginBottom: 16 }}>
-            ⚠️ {error}
-          </div>
-        )}
-        {success && (
-  <div
-    style={{
-      background: '#e8f8ee',
-      color: '#1f7a45',
-      padding: '10px 14px',
-      borderRadius: 10,
-      fontSize: 13,
-      marginBottom: 16,
-      border: '1px solid #cdeed8',
-    }}
-  >
-    ✅ {success}
-  </div>
-)}
+        {error && <div style={{ background: '#fdeaea', color: '#d63b3b', padding: '10px 14px', borderRadius: 10, fontSize: 13, marginBottom: 16 }}>⚠️ {error}</div>}
+        {success && <div style={{ background: '#e8f8ee', color: '#1f7a45', padding: '10px 14px', borderRadius: 10, fontSize: 13, marginBottom: 16, border: '1px solid #cdeed8' }}>✅ {success}</div>}
 
-
-        {/* Submit button */}
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          style={{
-            width: '100%', padding: '13px', background: '#1a5c9a', color: '#fff',
-            border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 600,
-            cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
-            fontFamily: 'var(--font-sans)', transition: 'opacity 0.15s',
-          }}
-          
-        >
+        <button onClick={handleSubmit} disabled={loading} style={{ width: '100%', padding: '13px', background: '#1a5c9a', color: '#fff', border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
           {loading ? '⏳ Please wait...' : isLogin ? 'Log in' : 'Create account'}
         </button>
-{isLogin && (
-  <button
-    type="button"
-    onClick={resendVerification}
-    style={{
-      width: '100%',
-      marginTop: 12,
-      padding: '10px',
-      border: 'none',
-      background: 'transparent',
-      color: '#1a5c9a',
-      cursor: 'pointer',
-      fontSize: 13,
-      fontWeight: 500,
-    }}
-  >
-    Resend verification email
-  </button>
-)}
+
+        {isLogin && (
+          <button type="button" onClick={resendVerification} style={{ width: '100%', marginTop: 12, padding: '10px', border: 'none', background: 'transparent', color: '#1a5c9a', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
+            Resend verification email
+          </button>
+        )}
 
         <p style={{ textAlign: 'center', fontSize: 12, color: '#9c9890', marginTop: 20 }}>
           By continuing, you agree to DriverLink's Terms of Service.
