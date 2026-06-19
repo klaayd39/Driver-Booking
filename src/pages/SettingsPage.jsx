@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Bell, Navigation, MessageSquare, CreditCard, Shield, Moon, Globe, LogOut, ChevronRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { supabase } from '../lib/supabase';
 import { Card, Badge, SectionLabel, Button, Divider } from '../components/UI';
 
 function SettingRow({ icon, label, description, value, onToggle, isToggle = true }) {
@@ -37,7 +38,7 @@ function SettingRow({ icon, label, description, value, onToggle, isToggle = true
   );
 }
 
-export default function SettingsPage() {
+export default function SettingsPage({ onLogout }) {
   const { showNotification } = useApp();
   const [settings, setSettings] = useState({
     notifications: true,
@@ -48,8 +49,18 @@ export default function SettingsPage() {
 
   const toggle = (key) => setSettings(prev => ({ ...prev, [key]: !prev[key] }));
 
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      showNotification('Failed to sign out.', 'error');
+      return;
+    }
+    showNotification('Logged out.', 'info');
+    onLogout && onLogout();
+  };
+
   return (
-   <div style={{ padding: '16px', maxWidth: '100%', animation: 'fadeUp 0.3s ease', overflowX: 'hidden' }}>
+    <div style={{ padding: '16px', maxWidth: '100%', animation: 'fadeUp 0.3s ease', overflowX: 'hidden' }}>
       <div style={{ marginBottom: 24 }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: '#1c1a17', marginBottom: 4 }}>Settings</h2>
         <p style={{ fontSize: 14, color: '#9c9890' }}>App version 1.0.0 · DriverLink PH</p>
@@ -88,7 +99,7 @@ export default function SettingsPage() {
         ))}
       </Card>
 
-      <Button variant="danger" size="md" icon={<LogOut size={15} />} onClick={() => showNotification('Logged out.', 'info')}>
+      <Button variant="danger" size="md" icon={<LogOut size={15} />} onClick={handleSignOut}>
         Sign out
       </Button>
     </div>
