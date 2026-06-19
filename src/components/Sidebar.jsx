@@ -20,27 +20,32 @@ export default function Sidebar({ activePage, onNavigate }) {
 
   const getButtonStyle = (isActive) => ({
     width: 48, height: 48, borderRadius: 12, border: 'none',
-    background: isActive ? 'rgba(26, 92, 154, 0.1)' : 'transparent',
-    color: isActive ? '#1a5c9a' : '#9c9890',
+    background: isActive ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+    color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.45)',
     display: 'flex', flexDirection: 'column', alignItems: 'center',
     justifyContent: 'center', cursor: 'pointer', gap: 2,
     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative', zIndex: 1,
   });
 
   return (
     <nav className="desktop-sidebar" style={{
-      width: 72, background: '#ffffff', borderRight: '1px solid #f0eeea',
+      width: 72, background: '#1B4332', borderRight: '1px solid #143426',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       padding: '20px 0', gap: 8, flexShrink: 0,
+      position: 'relative', overflow: 'hidden',
     }}>
+      {/* Subtle tribal weave texture */}
+      <div className="tribal-pattern" />
+
       {/* Logo */}
-      <div style={{ marginBottom: 12 }}>
+      <div style={{ marginBottom: 12, position: 'relative', zIndex: 1 }}>
         <div style={{
-          width: 40, height: 40, borderRadius: 12, background: '#1a5c9a',
+          width: 40, height: 40, borderRadius: 12, background: '#D4A017',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 12px rgba(26, 92, 154, 0.2)',
+          boxShadow: '0 4px 12px rgba(212, 160, 23, 0.3)',
         }}>
-          <Car size={22} color="#fff" />
+          <Car size={22} color="#1B4332" />
         </div>
       </div>
 
@@ -53,7 +58,7 @@ export default function Sidebar({ activePage, onNavigate }) {
             style={getButtonStyle(isActive)}
           >
             <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-            <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.01em' }}>{label}</span>
+            <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.01em', color: isActive ? '#D4A017' : 'inherit' }}>{label}</span>
           </button>
         );
       })}
@@ -61,7 +66,7 @@ export default function Sidebar({ activePage, onNavigate }) {
       <div style={{ flex: 1 }} />
 
       {/* Separator */}
-      <div style={{ width: '100%', height: 1, background: '#f0eeea', margin: '8px 0' }} />
+      <div style={{ width: '70%', height: 1, background: 'rgba(255,255,255,0.1)', margin: '8px 0', position: 'relative', zIndex: 1 }} />
 
       <button
         onClick={() => onNavigate('settings')}

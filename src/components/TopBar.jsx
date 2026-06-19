@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { Bell } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { supabase } from '../lib/supabase';
 
 const PAGE_TITLES = {
   book: 'Book a Driver',
@@ -14,178 +12,74 @@ const PAGE_TITLES = {
   settings: 'Settings',
 };
 
-export default function TopBar({ activePage }) {
+export default function TopBar({ activePage, user }) {
   const { mode, setMode } = useApp();
-  const [showMenu, setShowMenu] = useState(false);
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      console.error('Logout error:', error.message);
-    }
-
-    setShowMenu(false);
-  };
+  const initials = (user?.user_metadata?.full_name || 'User')
+    .split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
- <header style={{
-  height: 60, background: '#fff', borderBottom: '1px solid #eae8e2',
-  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  padding: '0 16px',
-  paddingTop: 'env(safe-area-inset-top)',
-  paddingLeft: 'max(16px, env(safe-area-inset-left))',
-  paddingRight: 'max(16px, env(safe-area-inset-right))',
-  flexShrink: 0,
-}}>
-      <h1
-        style={{
-          fontSize: 17,
-          fontWeight: 600,
-          color: '#1c1a17',
-        }}
-      >
+    <header className="topbar" style={{
+      height: 60, background: '#1B4332', borderBottom: '1px solid #143426',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 16px',
+      paddingLeft: 'max(16px, env(safe-area-inset-left))',
+      paddingRight: 'max(16px, env(safe-area-inset-right))',
+      flexShrink: 0, position: 'relative', overflow: 'hidden',
+    }}>
+      <div className="tribal-pattern-light" />
+
+      <h1 className="topbar-title" style={{
+        fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 700,
+        color: '#fff', position: 'relative', zIndex: 1,
+      }}>
         {PAGE_TITLES[activePage] || 'DriverLink'}
       </h1>
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 16,
-        }}
-      >
-        {/* Mode Toggle */}
-        <div
-          style={{
-            display: 'flex',
-            background: '#f1efe9',
-            borderRadius: 10,
-            padding: 3,
-            gap: 2,
-          }}
-        >
-          {['customer', 'driver'].map((m) => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, position: 'relative', zIndex: 1 }}>
+        {/* Mode toggle */}
+        <div style={{
+          display: 'flex', background: 'rgba(255,255,255,0.12)', borderRadius: 10,
+          padding: 3, gap: 2,
+        }}>
+          {['customer', 'driver'].map(m => (
             <button
               key={m}
               onClick={() => setMode(m)}
               style={{
-                padding: '6px 14px',
-                borderRadius: 8,
-                border: 'none',
-                background: mode === m ? '#fff' : 'transparent',
-                color: mode === m ? '#1c1a17' : '#9c9890',
-                fontSize: 13,
-                fontWeight: mode === m ? 600 : 400,
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-                fontFamily: 'var(--font-sans)',
-                boxShadow:
-                  mode === m
-                    ? '0 1px 3px rgba(0,0,0,0.1)'
-                    : 'none',
+                padding: '6px 12px', borderRadius: 8, border: 'none',
+                background: mode === m ? '#D4A017' : 'transparent',
+                color: mode === m ? '#1A1A18' : 'rgba(255,255,255,0.65)',
+                fontSize: 12, fontWeight: mode === m ? 700 : 500,
+                cursor: 'pointer', transition: 'all 0.15s', fontFamily: 'var(--font-sans)',
               }}
             >
-              {m === 'customer'
-                ? '🚗 Customer'
-                : '🚘 Driver'}
+              {m === 'customer' ? '🚗 Customer' : '🚘 Driver'}
             </button>
           ))}
         </div>
 
-        {/* Notification Bell */}
-        <button
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 10,
-            border: '1px solid #eae8e2',
-            background: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: '#6b6760',
-            position: 'relative',
-          }}
-        >
-          <Bell size={17} />
-
-          <span
-            style={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              width: 7,
-              height: 7,
-              borderRadius: '50%',
-              background: '#d63b3b',
-              border: '1.5px solid #fff',
-            }}
-          />
+        {/* Notification bell */}
+        <button style={{
+          width: 34, height: 34, borderRadius: 10, border: 'none',
+          background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', color: '#fff', position: 'relative',
+        }}>
+          <Bell size={16} />
+          <span style={{
+            position: 'absolute', top: 7, right: 7, width: 7, height: 7,
+            borderRadius: '50%', background: '#C1440E', border: '1.5px solid #1B4332',
+          }} />
         </button>
 
-        {/* Avatar + Dropdown */}
-        <div style={{ position: 'relative' }}>
-          <div
-            onClick={() => setShowMenu(!showMenu)}
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              background:
-                mode === 'customer'
-                  ? '#e8f1fb'
-                  : '#faeeda',
-              color:
-                mode === 'customer'
-                  ? '#1a5c9a'
-                  : '#854f0b',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: 'pointer',
-              userSelect: 'none',
-            }}
-          >
-            {mode === 'customer' ? 'MV' : 'RD'}
-          </div>
-
-          {showMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 46,
-                right: 0,
-                minWidth: 150,
-                background: '#fff',
-                border: '1px solid #eae8e2',
-                borderRadius: 12,
-                overflow: 'hidden',
-                boxShadow: '0 12px 30px rgba(0,0,0,0.12)',
-                zIndex: 1000,
-              }}
-            >
-              <button
-                onClick={handleLogout}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: 'none',
-                  background: 'transparent',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  color: '#dc2626',
-                  fontWeight: 600,
-                  fontSize: 14,
-                }}
-              >
-                Logout
-              </button>
-            </div>
-          )}
+        {/* User avatar */}
+        <div style={{
+          width: 34, height: 34, borderRadius: '50%',
+          background: '#D4A017',
+          color: '#1A1A18',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontWeight: 700, fontSize: 12, cursor: 'pointer',
+        }}>
+          {initials}
         </div>
       </div>
     </header>
