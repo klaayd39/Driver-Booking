@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { supabase } from '../lib/supabase';
-import { Car, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Car, Mail, Lock, User, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 export default function AuthPage({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,6 +11,11 @@ export default function AuthPage({ onLogin }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // OTP state
+  const [showOtp, setShowOtp] = useState(false);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const otpRefs = useRef([]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -45,17 +50,94 @@ export default function AuthPage({ onLogin }) {
         if (error) {
           setError(error.message);
         } else {
-          setSuccess('Account created! Please check your email and click the verification link.');
-          setIsLogin(true);
-          setName('');
-          setEmail('');
-          setPassword('');
+          setSuccess('We sent a 6-digit code to ' + email);
+          setShowOtp(true);
         }
       }
     } catch (err) {
       setError(err.message || 'Something went wrong.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOtpChange = (index, value) => {
+    // Allow only digits
+    if (!/^\d*$/.test(value)) return;
+    const updated = [...otp];
+    updated[index] = value.slice(-1); // keep last char only
+    setOtp(updated);
+    // Auto-advance
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+    }
+    if (e.key === 'Enter') handleVerifyOtp();
+  };
+
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    const updated = [...otp];
+    pasted.split('').forEach((char, i) => { updated[i] = char; });
+    setOtp(updated);
+    const nextEmpty = pasted.length < 6 ? pasted.length : 5;
+    otpRefs.current[nextEmpty]?.focus();
+  };
+
+  const handleVerifyOtp = async () => {
+    const token = otp.join('');
+    if (token.length < 6) {
+      setError('Please enter all 6 digits.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'signup',
+      });
+
+      if (error) {
+        setError(error.message);
+      } else {
+        onLogin(data.user);
+      }
+    } catch (err) {
+      setError(err.message || 'Verification failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendOtp = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    });
+
+    setLoading(false);
+    if (error) {
+      setError(error.message);
+    } else {
+      setSuccess('A new code has been sent to ' + email);
+      setOtp(['', '', '', '', '', '']);
+      otpRefs.current[0]?.focus();
     }
   };
 
@@ -72,9 +154,7 @@ export default function AuthPage({ onLogin }) {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
+      options: { emailRedirectTo: window.location.origin },
     });
 
     setLoading(false);
@@ -86,6 +166,112 @@ export default function AuthPage({ onLogin }) {
     }
   };
 
+  // ── OTP Screen ────────────────────────────────────────────────────────────
+  if (showOtp) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', background: 'linear-gradient(135deg, #e8f1fb 0%, #f9f8f6 100%)',
+        padding: 20,
+      }}>
+        <div style={{
+          background: '#fff', borderRadius: 24, padding: '40px 36px',
+          width: '100%', maxWidth: 420,
+          boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+          textAlign: 'center',
+        }}>
+          {/* Icon */}
+          <div style={{
+            width: 56, height: 56, borderRadius: 16, background: '#1a5c9a',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 20px',
+          }}>
+            <ShieldCheck size={28} color="#fff" />
+          </div>
+
+          <h2 style={{ fontSize: 22, color: '#1c1a17', marginBottom: 8 }}>Verify your email</h2>
+          <p style={{ fontSize: 13, color: '#9c9890', marginBottom: 28, lineHeight: 1.6 }}>
+            Enter the 6-digit code we sent to<br />
+            <strong style={{ color: '#1c1a17' }}>{email}</strong>
+          </p>
+
+          {/* OTP inputs */}
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 24 }}>
+            {otp.map((digit, i) => (
+              <input
+                key={i}
+                ref={el => otpRefs.current[i] = el}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={digit}
+                onChange={e => handleOtpChange(i, e.target.value)}
+                onKeyDown={e => handleOtpKeyDown(i, e)}
+                onPaste={i === 0 ? handleOtpPaste : undefined}
+                style={{
+                  width: 48, height: 56, textAlign: 'center',
+                  fontSize: 22, fontWeight: 700, color: '#1c1a17',
+                  border: digit ? '2px solid #1a5c9a' : '2px solid #e4e1d8',
+                  borderRadius: 12, background: digit ? '#eef4fb' : '#faf9f7',
+                  outline: 'none', transition: 'border 0.15s, background 0.15s',
+                }}
+              />
+            ))}
+          </div>
+
+          {error && (
+            <div style={{ background: '#fdeaea', color: '#d63b3b', padding: '10px 14px', borderRadius: 10, fontSize: 13, marginBottom: 16 }}>
+              ⚠️ {error}
+            </div>
+          )}
+          {success && (
+            <div style={{ background: '#e8f8ee', color: '#1f7a45', padding: '10px 14px', borderRadius: 10, fontSize: 13, marginBottom: 16, border: '1px solid #cdeed8' }}>
+              ✅ {success}
+            </div>
+          )}
+
+          <button
+            onClick={handleVerifyOtp}
+            disabled={loading || otp.join('').length < 6}
+            style={{
+              width: '100%', padding: '13px', background: '#1a5c9a',
+              color: '#fff', border: 'none', borderRadius: 12, fontSize: 15,
+              fontWeight: 600, cursor: (loading || otp.join('').length < 6) ? 'not-allowed' : 'pointer',
+              opacity: (loading || otp.join('').length < 6) ? 0.65 : 1,
+              marginBottom: 12,
+            }}
+          >
+            {loading ? '⏳ Verifying...' : 'Verify code'}
+          </button>
+
+          <button
+            onClick={resendOtp}
+            disabled={loading}
+            style={{
+              width: '100%', padding: '10px', border: 'none',
+              background: 'transparent', color: '#1a5c9a', cursor: 'pointer',
+              fontSize: 13, fontWeight: 500,
+            }}
+          >
+            Resend code
+          </button>
+
+          <button
+            onClick={() => { setShowOtp(false); setOtp(['', '', '', '', '', '']); setError(''); setSuccess(''); }}
+            style={{
+              width: '100%', padding: '8px', border: 'none',
+              background: 'transparent', color: '#9c9890', cursor: 'pointer',
+              fontSize: 12, marginTop: 4,
+            }}
+          >
+            ← Back to sign up
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Auth Screen ───────────────────────────────────────────────────────────
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center',
