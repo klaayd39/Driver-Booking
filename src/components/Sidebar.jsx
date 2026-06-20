@@ -1,5 +1,4 @@
 import { MapPin, Users, CalendarDays, Gauge, User, Settings, Car } from 'lucide-react';
-import { useApp } from '../context/AppContext';
 
 const NAV_ITEMS_CUSTOMER = [
   { id: 'book', icon: MapPin, label: 'Book' },
@@ -14,9 +13,8 @@ const NAV_ITEMS_DRIVER = [
   { id: 'driver-profile', icon: User, label: 'Profile' },
 ];
 
-export default function Sidebar({ activePage, onNavigate }) {
-  const { mode } = useApp();
-  const items = mode === 'customer' ? NAV_ITEMS_CUSTOMER : NAV_ITEMS_DRIVER;
+export default function Sidebar({ role, activePage, onNavigate }) {
+  const items = role === 'driver' ? NAV_ITEMS_DRIVER : NAV_ITEMS_CUSTOMER;
 
   const getButtonStyle = (isActive) => ({
     width: 48, height: 48, borderRadius: 12, border: 'none',

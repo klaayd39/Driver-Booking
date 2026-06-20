@@ -1,5 +1,4 @@
 import { MapPin, Users, CalendarDays, User, Gauge } from 'lucide-react';
-import { useApp } from '../context/AppContext';
 
 const NAV_CUSTOMER = [
   { id: 'book', icon: MapPin, label: 'Book' },
@@ -14,9 +13,8 @@ const NAV_DRIVER = [
   { id: 'driver-profile', icon: User, label: 'Profile' },
 ];
 
-export default function BottomNav({ activePage, onNavigate }) {
-  const { mode } = useApp();
-  const items = mode === 'customer' ? NAV_CUSTOMER : NAV_DRIVER;
+export default function BottomNav({ role, activePage, onNavigate }) {
+  const items = role === 'driver' ? NAV_DRIVER : NAV_CUSTOMER;
 
   return (
     <nav className="mobile-bottom-nav" style={{

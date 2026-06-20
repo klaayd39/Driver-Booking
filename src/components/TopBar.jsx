@@ -1,5 +1,4 @@
 import { Bell } from 'lucide-react';
-import { useApp } from '../context/AppContext';
 
 const PAGE_TITLES = {
   book: 'Book a Driver',
@@ -13,7 +12,7 @@ const PAGE_TITLES = {
 };
 
 export default function TopBar({ activePage, user }) {
-  const { mode, setMode } = useApp();
+  const role = user?.user_metadata?.role;
   const initials = (user?.user_metadata?.full_name || 'User')
     .split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
@@ -36,27 +35,18 @@ export default function TopBar({ activePage, user }) {
       </h1>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, position: 'relative', zIndex: 1 }}>
-        {/* Mode toggle */}
-        <div style={{
-          display: 'flex', background: 'rgba(255,255,255,0.12)', borderRadius: 10,
-          padding: 3, gap: 2,
-        }}>
-          {['customer', 'driver'].map(m => (
-            <button
-              key={m}
-              onClick={() => setMode(m)}
-              style={{
-                padding: '6px 12px', borderRadius: 8, border: 'none',
-                background: mode === m ? '#D4A017' : 'transparent',
-                color: mode === m ? '#1A1A18' : 'rgba(255,255,255,0.65)',
-                fontSize: 12, fontWeight: mode === m ? 700 : 500,
-                cursor: 'pointer', transition: 'all 0.15s', fontFamily: 'var(--font-sans)',
-              }}
-            >
-              {m === 'customer' ? '🚗 Customer' : '🚘 Driver'}
-            </button>
-          ))}
-        </div>
+        {/* Role badge (read-only, no toggle) */}
+        {role && (
+          <div style={{
+            padding: '6px 12px', borderRadius: 8,
+            background: 'rgba(255,255,255,0.12)',
+            color: 'rgba(255,255,255,0.85)',
+            fontSize: 12, fontWeight: 600,
+            fontFamily: 'var(--font-sans)',
+          }}>
+            {role === 'driver' ? '🚘 Driver' : '🚗 Customer'}
+          </div>
+        )}
 
         {/* Notification bell */}
         <button style={{

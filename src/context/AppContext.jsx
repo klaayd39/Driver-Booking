@@ -14,7 +14,6 @@ export const DRIVERS = [
 ];
 
 export function AppProvider({ children }) {
-  const [mode, setMode] = useState('customer');
   const [drivers, setDrivers] = useState(DRIVERS);
   const [bookings, setBookings] = useState([]);
   const [driverOnline, setDriverOnline] = useState(true);
@@ -82,7 +81,6 @@ export function AppProvider({ children }) {
 
   return (
     <AppContext.Provider value={{
-      mode, setMode,
       drivers, loading,
       bookings, addBooking, cancelBooking,
       driverOnline, setDriverOnline,

@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react';
 import { supabase } from '../lib/supabase';
-import { Car, Mail, Lock, User, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Car, Mail, Lock, User, Eye, EyeOff, ShieldCheck, UserCircle } from 'lucide-react';
 
 export default function AuthPage({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [role, setRole] = useState('customer'); // 'customer' | 'driver'
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -43,7 +44,7 @@ export default function AuthPage({ onLogin }) {
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: name },
+            data: { full_name: name, role },
           },
         });
 
@@ -62,12 +63,10 @@ export default function AuthPage({ onLogin }) {
   };
 
   const handleOtpChange = (index, value) => {
-    // Allow only digits
     if (!/^\d*$/.test(value)) return;
     const updated = [...otp];
-    updated[index] = value.slice(-1); // keep last char only
+    updated[index] = value.slice(-1);
     setOtp(updated);
-    // Auto-advance
     if (value && index < 5) {
       otpRefs.current[index + 1]?.focus();
     }
@@ -180,7 +179,6 @@ export default function AuthPage({ onLogin }) {
           boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
           textAlign: 'center',
         }}>
-          {/* Icon */}
           <div style={{
             width: 56, height: 56, borderRadius: 16, background: '#1a5c9a',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -195,7 +193,6 @@ export default function AuthPage({ onLogin }) {
             <strong style={{ color: '#1c1a17' }}>{email}</strong>
           </p>
 
-          {/* OTP inputs */}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 24 }}>
             {otp.map((digit, i) => (
               <input
@@ -314,13 +311,52 @@ export default function AuthPage({ onLogin }) {
         </div>
 
         {!isLogin && (
-          <div style={{ marginBottom: 14 }}>
-            <div style={{ fontSize: 12, fontWeight: 500, color: '#6b6760', marginBottom: 5 }}>Full name</div>
-            <div style={{ position: 'relative' }}>
-              <User size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9c9890' }} />
-              <input value={name} onChange={e => setName(e.target.value)} placeholder="Maria Vizcarra" style={{ width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e4e1d8', borderRadius: 10, fontSize: 14, background: '#faf9f7', outline: 'none' }} />
+          <>
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 12, fontWeight: 500, color: '#6b6760', marginBottom: 5 }}>Full name</div>
+              <div style={{ position: 'relative' }}>
+                <User size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9c9890' }} />
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="Maria Vizcarra" style={{ width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e4e1d8', borderRadius: 10, fontSize: 14, background: '#faf9f7', outline: 'none' }} />
+              </div>
             </div>
-          </div>
+
+            {/* Role selector */}
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 12, fontWeight: 500, color: '#6b6760', marginBottom: 5 }}>I am a...</div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setRole('customer')}
+                  style={{
+                    flex: 1, padding: '14px 10px', borderRadius: 12,
+                    border: role === 'customer' ? '2px solid #1a5c9a' : '1px solid #e4e1d8',
+                    background: role === 'customer' ? '#eef4fb' : '#faf9f7',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                    cursor: 'pointer', transition: 'border 0.15s, background 0.15s',
+                  }}
+                >
+                  <UserCircle size={22} color={role === 'customer' ? '#1a5c9a' : '#9c9890'} />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: role === 'customer' ? '#1a5c9a' : '#4a4740' }}>Customer</span>
+                  <span style={{ fontSize: 11, color: '#9c9890', textAlign: 'center' }}>I want to book a driver</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('driver')}
+                  style={{
+                    flex: 1, padding: '14px 10px', borderRadius: 12,
+                    border: role === 'driver' ? '2px solid #1a5c9a' : '1px solid #e4e1d8',
+                    background: role === 'driver' ? '#eef4fb' : '#faf9f7',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                    cursor: 'pointer', transition: 'border 0.15s, background 0.15s',
+                  }}
+                >
+                  <Car size={22} color={role === 'driver' ? '#1a5c9a' : '#9c9890'} />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: role === 'driver' ? '#1a5c9a' : '#4a4740' }}>Driver</span>
+                  <span style={{ fontSize: 11, color: '#9c9890', textAlign: 'center' }}>I want to give rides</span>
+                </button>
+              </div>
+            </div>
+          </>
         )}
 
         <div style={{ marginBottom: 14 }}>
