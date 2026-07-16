@@ -1,6 +1,10 @@
 import { useState, useRef } from 'react';
 import { supabase } from '../lib/supabase';
+<<<<<<< HEAD
 import { Car, Mail, Lock, User, Eye, EyeOff, ShieldCheck, UserCircle, KeyRound } from 'lucide-react';
+=======
+import { Car, Mail, Lock, User, Eye, EyeOff, ShieldCheck, UserCircle } from 'lucide-react';
+>>>>>>> b8ec5890d2c3219cb99d27a96aada3c854c80115
 
 export default function AuthPage({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,9 +17,14 @@ export default function AuthPage({ onLogin }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+<<<<<<< HEAD
   // OTP / forgot-password state
   const [showOtp, setShowOtp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+=======
+  // OTP state
+  const [showOtp, setShowOtp] = useState(false);
+>>>>>>> b8ec5890d2c3219cb99d27a96aada3c854c80115
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const otpRefs = useRef([]);
 
@@ -166,6 +175,7 @@ export default function AuthPage({ onLogin }) {
     }
   };
 
+<<<<<<< HEAD
   const handleForgotPassword = async () => {
     if (!email) {
       setError('Please enter your email address first.');
@@ -283,6 +293,8 @@ export default function AuthPage({ onLogin }) {
     );
   }
 
+=======
+>>>>>>> b8ec5890d2c3219cb99d27a96aada3c854c80115
   // ── OTP Screen ────────────────────────────────────────────────────────────
   if (showOtp) {
     return (
@@ -485,7 +497,11 @@ export default function AuthPage({ onLogin }) {
           </div>
         </div>
 
+<<<<<<< HEAD
         <div style={{ marginBottom: isLogin ? 8 : 24 }}>
+=======
+        <div style={{ marginBottom: 24 }}>
+>>>>>>> b8ec5890d2c3219cb99d27a96aada3c854c80115
           <div style={{ fontSize: 12, fontWeight: 500, color: '#6b6760', marginBottom: 5 }}>Password</div>
           <div style={{ position: 'relative' }}>
             <Lock size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9c9890' }} />
@@ -496,6 +512,7 @@ export default function AuthPage({ onLogin }) {
           </div>
         </div>
 
+<<<<<<< HEAD
         {isLogin && (
           <div style={{ textAlign: 'right', marginBottom: 24 }}>
             <button
@@ -508,6 +525,8 @@ export default function AuthPage({ onLogin }) {
           </div>
         )}
 
+=======
+>>>>>>> b8ec5890d2c3219cb99d27a96aada3c854c80115
         {error && <div style={{ background: '#fdeaea', color: '#d63b3b', padding: '10px 14px', borderRadius: 10, fontSize: 13, marginBottom: 16 }}>⚠️ {error}</div>}
         {success && <div style={{ background: '#e8f8ee', color: '#1f7a45', padding: '10px 14px', borderRadius: 10, fontSize: 13, marginBottom: 16, border: '1px solid #cdeed8' }}>✅ {success}</div>}
 
@@ -515,6 +534,15 @@ export default function AuthPage({ onLogin }) {
           {loading ? '⏳ Please wait...' : isLogin ? 'Log in' : 'Create account'}
         </button>
 
+<<<<<<< HEAD
+=======
+        {isLogin && (
+          <button type="button" onClick={resendVerification} style={{ width: '100%', marginTop: 12, padding: '10px', border: 'none', background: 'transparent', color: '#1a5c9a', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
+            Resend verification email
+          </button>
+        )}
+
+>>>>>>> b8ec5890d2c3219cb99d27a96aada3c854c80115
         <p style={{ textAlign: 'center', fontSize: 12, color: '#9c9890', marginTop: 20 }}>
           By continuing, you agree to DriverLink's Terms of Service.
         </p>
